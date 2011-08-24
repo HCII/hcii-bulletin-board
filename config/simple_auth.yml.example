@@ -1,0 +1,11 @@
+# List of options:
+# "password"	=> ""	# The password
+
+development:
+  password: example
+
+test:
+  password: example
+
+production:
+  password: example
