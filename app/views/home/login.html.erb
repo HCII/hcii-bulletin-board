@@ -1,0 +1,21 @@
+<% if authorized? %>
+
+	<p>
+		You're currently logged in as admin.
+		<%= link_to "Sign out.", logout_path %>
+	</p>
+
+<% else %>
+
+	<div class="prepend-8 span-8">
+		<h2>Sign In</h2>
+
+		<% form_tag(:controller => "home", :action => "authenticate") do %>
+			<%= label_tag :password, "Admin Password" %><br/>
+			<%= password_field_tag :password, nil, :class => "text" %>
+			<hr class="space" />
+			<%= submit_tag "Sign In" %>
+		<% end %>
+	</div>
+	
+<% end %>

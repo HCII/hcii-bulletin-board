@@ -1,0 +1,27 @@
+<div id="bd-nav">
+	<%= link_to 'New Person', new_person_path %>
+</div>
+
+<h2>Listing people</h2>
+
+<table>
+  <tr>
+    <th>First name</th>
+    <th>Last name</th>
+	<th>Room</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @people.each do |person| %>
+  <tr>
+    <td><%= person.first_name %></td>
+    <td><%= person.last_name %></td>
+	<td><%= person.room %></td>
+    <td><%= link_to 'Show', person %></td>
+    <td><%= link_to 'Edit', edit_person_path(person) %></td>
+    <td><%= link_to 'Destroy', person, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>HCII Bulletin Board</title>
+	
+	<!-- Blueprint CSS -->
+	<link rel="stylesheet" href="/stylesheets/cw15gw20cc24/screen.css" type="text/css" media="screen, projection" />
+	<link rel="stylesheet" href="/stylesheets/cw15gw20cc24/print.css" type="text/css" media="print" /> 
+	<!--[if lt IE 8]>
+		<link rel="stylesheet" href="/stylesheets/cw15gw20cc24/ie.css" type="text/css" media="screen, projection" />
+	<![endif]-->
+	
+	<%= javascript_include_tag :defaults %>
+	<%= csrf_meta_tag %>
+	
+	<style type="text/css">
+	a { color:#44a9eb; }
+	#hd {
+		margin-bottom:20px;
+		padding-top:5px;
+		height:24px;
+		background-color:#333;
+		color:#fff;
+	}
+		#hd h1 {
+			font-size:14px;
+			font-weight:bold;
+			color:#fff;
+		}
+	#account-nav {
+		text-align:right;
+	}
+	#bd-nav {
+		float:right;
+	}
+	span.pipe {
+		margin:0 5px;
+		color:#999;
+	}
+	</style>
+</head>
+<body>
+
+<div id="hd">
+	<div class="container">
+		<div class="span-12">
+			<h1>HCII Bulletin Board</h1>
+		</div>
+		<div id="account-nav" class="span-12 last">
+			<% if authorized? %>
+				You're logged in <span class="pipe">|</span>
+				<%= link_to "Log out", logout_path %>
+			<% else %>
+				<%= link_to "Log in", login_path %>
+			<% end %>
+		</div>
+	</div>
+</div>
+
+<div class="container">
+	<div id="bd">
+		<%= yield %>
+	</div>
+</div>
+
+</body>
+</html>
