@@ -21,9 +21,9 @@ td {
 
 /* Header */
 #hd {
+	margin-top:10px;
 	margin-bottom:20px;
-	padding-top:5px;
-	height:24px;
+	height:45px;
 	color:#fff;
 }
 	#hd h1 {

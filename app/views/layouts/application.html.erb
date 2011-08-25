@@ -2,11 +2,8 @@
 <html>
 <head>
 	<title>
-		<% if (str = yield :title) %>
-		 	<%= str %> - HCII Bulletin Board
-		<% else %>
-			HCII Bulletin Board
-		<% end %>
+		<% title = yield(:title) %>
+		<%= (title.blank?) ? 'HCII Bulletin Board' : "#{title} - HCII Bulletin Board" %>
 	</title>
 	
 	<!-- Blueprint CSS -->
@@ -28,7 +25,12 @@
 	<!-- Header -->
 	<div id="hd" class="span-24">
 		<div class="span-12">
-			<h1><%= link_to "HCII Bulletin Board", root_path %></h1>
+			<h1><a href="/">
+				<%= image_tag "/images/hciibb/logo.png", 
+					:size => "231x45", 
+					:title => "HCII Bulletin Board",
+					:style => "margin-left:-5px;" %></a>
+			</h1>
 		</div>
 		<div id="account-nav" class="span-12 last">
 			<% if authorized? %>
