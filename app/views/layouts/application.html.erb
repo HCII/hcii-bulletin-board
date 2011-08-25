@@ -16,6 +16,8 @@
 	<!-- Application CSS -->
 	<link rel="stylesheet" href="/stylesheets/hciibb/main.css" type="text/css" media="screen, projection" />
 	
+	<%= yield :head %>
+	
 	<%= javascript_include_tag :defaults %>
 	<%= csrf_meta_tag %>
 </head>
