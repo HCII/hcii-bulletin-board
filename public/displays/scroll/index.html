@@ -83,7 +83,7 @@ whichFac = 0;
 whichStaff = 0;
 whichPhd = 0;
 whichMasters = 0;
-intervalLen = 100;
+intervalLen = 600;
 count = 0;
 
 // The template for the cells that appear in the display.
@@ -185,6 +185,8 @@ var imageScroll = function() {
 
 	// move strip of images to the right if it has reached the end
 	if (whichFac == 0) {
+		$("#faculty-box").scrollTo("0px", 0);
+		/*	
 		var width = $("#faculty-row-0").width();
 		if ((count / numFac) % 2 == 1) {
 			var left = parseInt($("#faculty-row-1").css("left"));
@@ -192,7 +194,7 @@ var imageScroll = function() {
 		} else {
 			var left = parseInt($("#faculty-row-0").css("left"));
 			$("#faculty-row-1").css("left", left + width);
-		}
+		}*/
 	}			
 			
 
@@ -200,6 +202,8 @@ var imageScroll = function() {
 	$("#staff-box").scrollTo("+=" + picWidth + "px", intervalLen, { axis: "x",  onAfter: showInfo, easing: "linear" });
 
 	if (whichStaff == 0) {
+		$("#staff-box").scrollTo("0px", 0);
+		/*
 		var width = $("#staff-row-0").width();
 		if ((count / numFac) % 2 == 1) {
 			var left = parseInt($("#staff-row-1").css("left"));
@@ -207,14 +211,14 @@ var imageScroll = function() {
 		} else {
 			var left = parseInt($("#staff-row-0").css("left"));
 			$("#staff-row-1").css("left", left + width);
-		}
+		}*/
 	}			
 
 	whichPhd = (whichPhd + 1) % numPhd;
 	$("#phd-box").scrollTo("+=" + picWidth + "px", intervalLen, { axis: "x",  onAfter: showInfo, easing: "linear" });
 
 	if (whichPhd == 0) {
-		$("#phd-box").scrollTo("0px");
+		$("#phd-box").scrollTo("0px", 0);
 		/*
 		var width = $("#phd-row-0").width();
 		if ((count / numFac) % 2 == 1) {
@@ -230,6 +234,7 @@ var imageScroll = function() {
 	$("#masters-box").scrollTo("+=" + picWidth + "px", intervalLen, { axis: "x",  onAfter: showInfo, easing: "linear" });
 
 	if (whichMasters == 0) {
+		$("#masters-box").scrollTo("0px", 0);
 		
 		/*
 		var width = $("#masters-row-0").width();
