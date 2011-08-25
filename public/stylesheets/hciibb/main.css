@@ -3,6 +3,9 @@ html, body {
 	font-size:14px;
 	color:#fff;
 }
+h1, h2, h3, h4, h5, h6 {
+	color:#fff;
+}
 a { color:#44a9eb; }
 span.pipe {
 	margin:0 5px;
@@ -41,9 +44,6 @@ td {
 #bd {
 	margin-bottom:20px;
 }
-	#bd h1, #bd h2 {
-		color:#fff;
-	}
 #bd-nav {
 	float:right;
 }

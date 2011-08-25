@@ -1,7 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>HCII Bulletin Board</title>
+	<title>
+		<% if (str = yield :title) %>
+		 	<%= str %> - HCII Bulletin Board
+		<% else %>
+			HCII Bulletin Board
+		<% end %>
+	</title>
 	
 	<!-- Blueprint CSS -->
 	<link rel="stylesheet" href="/stylesheets/cw15gw20cc24/screen.css" type="text/css" media="screen, projection" />
