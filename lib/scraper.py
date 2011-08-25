@@ -207,7 +207,7 @@ def makeHash(url, level, output):
 
 def runAll():
 	makeHash(hci_base + faculty_page, "faculty", "info.txt")
-	makeHash(hci_base + affiliated_page, "faculty", "info.txt")
+	makeHash(hci_base + affiliated_page, "affiliated", "info.txt")
 	makeHash(hci_base + phd_page, "phd", "info.txt")
 	makeHash(hci_base + masters_page, "masters", "info.txt")
 	makeHash(hci_base + admin_staff_page, "staff", "info.txt")
