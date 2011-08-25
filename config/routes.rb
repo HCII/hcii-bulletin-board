@@ -1,9 +1,10 @@
 Hciibb::Application.routes.draw do
   resources :people
   
-  match '/home/authenticate' => 'home#authenticate'
+  match '/home/:action' => 'home'
   match '/login' => 'home#login', :as => :login
   match '/logout' => 'home#logout', :as => :logout
+  match '/api' => 'home#api', :as => :api
     
   root :to => 'home#index'
 
