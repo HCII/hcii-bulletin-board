@@ -1,0 +1,32 @@
+<% content_for :title do %>API<% end %>
+
+<h2>API</h2>
+
+<h3>Get a list of people</h3>
+
+<p>
+	URL: <code>/people.json</code>
+</p>
+
+Example Output:<br/>
+<pre>
+	[	
+		{
+			"first_name": "Anind",
+			"last_name": "Dey",
+			"title": "Professor",
+			"room": "NSH 2502"
+		},
+		{
+			"first_name": "Scott",
+			"last_name": "Hudson",
+			"title": "Professor",
+			"room": "DevLab"
+		}
+	]
+</pre>
+
+JSONP <%= link_to "(?)", "http://en.wikipedia.org/wiki/JSONP", :target => "_blank" %>:<br/>
+<pre>
+	/people.json?callback=exampleCallback
+</pre>
