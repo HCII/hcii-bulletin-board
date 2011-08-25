@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<!--
+	Scroll Display for the HCII Bulletin Board
+	Licensed under the MIT License (http://www.opensource.org/licenses/mit-license.php).
+-->
+<html>
+<head>
+	<title>Scroll - HCII Bulletin Board</title>
+	
+	<style type="text/css">
+	html,body {
+		margin:0;
+		padding:0;
+		background-color:#999;
+	}
+	#display {
+		color:#000;
+	}
+		#display>.cell {
+			float:left;
+			margin:3px;
+			padding:5px;
+			background-color:#fff;
+			text-align:center;
+			-webkit-box-shadow:0 3px 5px rgba(0,0,0,0.5);
+			-moz-box-shadow:0 3px 5px rgba(0,0,0,0.5);
+			box-shadow:0 3px 5px rgba(0,0,0,0.5);
+			z-index:0;
+		}
+		#display>.cell>.img-box {
+			margin-bottom:3px;
+			width:120px;
+			height:120px;
+			overflow:hidden;
+		}
+		#display>.cell>.img-box>img {
+			width:120px;
+		}
+		#display>.cell>.name {
+			font-family:Helvetica,Arial,sans-serif;
+			font-size:11px;
+		}
+
+	.row { width: 800px; height: 130px; overflow-x: hidden; overflow-y: hidden; display: inline-block; }
+	.row-items { width: 10000px; height: 130px; }
+	.profile { display: inline; }
+	.profile-info { float: right; width: 130px;  }
+	#faculty-info { position: fixed; top: 20px; left: 200px; width: 260px; height: 130px; z-index: 99; background: #fff; border: 2px solid #00f; }
+	.info-pic { float: left; }
+	</style>
+</head>
+<body>
+	
+<div id="display"></div>
+
+<!-- Javascripts -->
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script type="text/javascript" src="http://cdn.ianli.com/javascripts/underscore/1.1.6/underscore.min.js"></script>
+<script type="text/javascript" src="jquery.scrollTo.js"></script>
+<script type="text/javascript">
+(function (window, $, undefined) {
+	picWidth = 130;
+	numFac = faculty_images.length + 1;
+	whichFac = 0;
+	intervalLen = 1200;
+	count = 0;
+	setInterval(imageScroll, intervalLen);
+
+	// The template for the cells that appear in the display.
+	var template = _.template(
+		'<div class="cell">' +
+			'<div class="img-box">' +
+				'<img src="<%= image %>" />' +
+			'</div>' +
+			'<div class="name"><%= first_name %> <%= last_name %></div>' +
+		'</div>'
+	);
+	
+	// Fetch the JSON file of people.
+	$.getJSON('/people.json', function (data, textStatus, jqXHR) {
+		_.each(data, function (value, i) {
+			if (!value.person.image) {
+				// Set image to a default blank image.
+				value.person.image = 'blank.png';
+			}
+		});
+	});
+})(window, jQuery);
+
+var appendProfile = function(type, which) {
+	$("#" + type + "-row").css('width', $("#" + type + "-row").css('width')+picWidth);
+	var profile_tag = $("<li>").addClass("profile")
+	if (type == "faculty") {
+		var profile_img_tag = $("<img>").attr("src", "data/faculty/" + faculty_images[which])
+	}
+	profile_img_tag.attr("height", 130)
+		       .attr("width", 130)
+		       .appendTo(profile_tag);
+	$("#" + type + "-row").append(profile_tag);
+
+	var info_tag = $("<div>").addClass("profile-info")
+				.html("mr. professor<br />nsh 1234")
+				.hide(); 
+	profile_tag.append(info_tag);
+	
+};
+
+var imageScroll = function() { 
+	count = count + 1;
+	whichFac = (whichFac + 1) % numFac;
+	$("#faculty-box").scrollTo($("#faculty-row li:nth-child(" + whichFac + ")"), intervalLen, { "axis" : "x", easing : "linear" });
+	var facOffset = 3;
+
+	$("#faculty-info img.info-pic").attr("src", "data/faculty/" + faculty_images[(whichFac)%numFac]);
+};
+
+
+</script>
+
+<div id="faculty-info"><img class="info-pic" src="data/faculty/Mankoff_March09.jpg" /> Jen Mankoff<br />nsh 1234</div>
+<div id="faculty-box" class="row"><ul id="faculty-row" class="row-items"></ul></div>
+<div class="row"><ul id="student-row" class="row-items"></ul></div>
+<div class="row"><ul id="staff-row" class="row-items"></ul></div>
+
+</body>
+</html>
