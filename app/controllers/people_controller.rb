@@ -9,6 +9,7 @@ class PeopleController < ApplicationController
 
     respond_to do |format|
       format.html # index.html.erb
+      format.json { render :json => @people, :callback => params[:callback] }
       format.xml  { render :xml => @people }
     end
   end
