@@ -41,8 +41,20 @@
 			font-size:11px;
 		}
 
-	.row { width: 800px; height: 130px; overflow-x: hidden; overflow-y: hidden; display: inline-block; }
-	.row-items { width: 10000px; height: 130px; }
+	.row { 
+		width: 800px; 
+		height: 130px; 
+		overflow-x: hidden; 
+		overflow-y: hidden; 
+		display: inline-block; 
+		position: relative; }
+	.row-container {
+		position: relative;
+	}
+	.row-items { 
+		height: 130px;
+		position: absolute;
+	 }
 	.profile { display: inline; }
 	.infobox { position: fixed; width: 130px; height: 180px; z-index: 99; background: #ccc;  }
 	#faculty-info { top: 9px; left: 200px; }
@@ -71,7 +83,7 @@ whichFac = 0;
 whichStaff = 0;
 whichPhd = 0;
 whichMasters = 0;
-intervalLen = 1200;
+intervalLen = 100;
 count = 0;
 
 // The template for the cells that appear in the display.
@@ -116,18 +128,27 @@ $.getJSON('/people.json', function (data, textStatus, jqXHR) {
 	numPhd = phd.length;
 	numMasters = masters.length;
 
+	$("#faculty-row-0").css("width", picWidth*numFac);
+	$("#faculty-row-1").css("width", picWidth*numFac);
+	$("#staff-row-0").css("width", picWidth*numStaff);
+	$("#staff-row-1").css("width", picWidth*numStaff);
+	$("#phd-row-0").css("width", picWidth*numPhd);
+	$("#phd-row-1").css("width", picWidth*numPhd);
+	$("#masters-row-0").css("width", picWidth*numMasters);
+	$("#masters-row-1").css("width", picWidth*numMasters);
+
 	setInterval(imageScroll, intervalLen);
 
 });
 
 var appendProfile = function(person, level) {
-	//$("#" + level + "-row").css('width', $("#" + level + "-row").css('width')+picWidth);
 	var profile_tag = $("<li>").addClass("profile")
 	var profile_img_tag = $("<img>").attr("src", person.image)
 	profile_img_tag.attr("height", 130)
 		       .attr("width", 130)
 		       .appendTo(profile_tag);
-	$("#" + level + "-row").append(profile_tag);
+	$("#" + level + "-row-0").append(profile_tag);
+	$("#" + level + "-row-1").append(profile_tag.clone());
 };
 
 var showInfo = function() {
@@ -148,7 +169,7 @@ var showInfo = function() {
 
 	person = masters[whichMasters];
 	featured_img_tag = $("<img>").addClass("info-pic").attr("src", person.image);
-	$("#master-info").html(person.first_name + " " + person.last_name + "<br />" + person.room)
+	$("#masters-info").html(person.first_name + " " + person.last_name + "<br />" + person.room)
 		       	.prepend(featured_img_tag);
 
 
@@ -157,18 +178,69 @@ var showInfo = function() {
 
 var imageScroll = function() { 
 	count = count + 1;
+
 	whichFac = (whichFac + 1) % numFac;
-	$("#faculty-box").scrollTo($("#faculty-row li:nth-child(" + whichFac + ")"), intervalLen, { axis : "x", onAfter: showInfo, easing : "linear" });
+	$("#faculty-box").scrollTo("+=" + picWidth + "px", intervalLen, { axis: "x",  onAfter: showInfo, easing: "linear" });
+
+
+	// move strip of images to the right if it has reached the end
+	if (whichFac == 0) {
+		var width = $("#faculty-row-0").width();
+		if ((count / numFac) % 2 == 1) {
+			var left = parseInt($("#faculty-row-1").css("left"));
+			$("#faculty-row-0").css("left", left + width);
+		} else {
+			var left = parseInt($("#faculty-row-0").css("left"));
+			$("#faculty-row-1").css("left", left + width);
+		}
+	}			
+			
 
 	whichStaff = (whichStaff + 1) % numStaff;
-	$("#staff-box").scrollTo($("#staff-row li:nth-child(" + whichStaff + ")"), intervalLen, { axis : "x", onAfter: showInfo, easing : "linear" });
+	$("#staff-box").scrollTo("+=" + picWidth + "px", intervalLen, { axis: "x",  onAfter: showInfo, easing: "linear" });
+
+	if (whichStaff == 0) {
+		var width = $("#staff-row-0").width();
+		if ((count / numFac) % 2 == 1) {
+			var left = parseInt($("#staff-row-1").css("left"));
+			$("#staff-row-0").css("left", left + width);
+		} else {
+			var left = parseInt($("#staff-row-0").css("left"));
+			$("#staff-row-1").css("left", left + width);
+		}
+	}			
 
 	whichPhd = (whichPhd + 1) % numPhd;
-	$("#phd-box").scrollTo($("#phd-row li:nth-child(" + whichPhd + ")"), intervalLen, { axis : "x", onAfter: showInfo, easing : "linear" });
+	$("#phd-box").scrollTo("+=" + picWidth + "px", intervalLen, { axis: "x",  onAfter: showInfo, easing: "linear" });
+
+	if (whichPhd == 0) {
+		$("#phd-box").scrollTo("0px");
+		/*
+		var width = $("#phd-row-0").width();
+		if ((count / numFac) % 2 == 1) {
+			var left = parseInt($("#phd-row-1").css("left"));
+			$("#phd-row-0").css("left", left + width);
+		} else {
+			var left = parseInt($("#phd-row-0").css("left"));
+			$("#phd-row-1").css("left", left + width);
+		}*/
+	}			
 
 	whichMasters = (whichMasters + 1) % numMasters;
-	$("#masters-box").scrollTo($("#masters-row li:nth-child(" + whichMasters + ")"), intervalLen, { axis : "x", onAfter: showInfo, easing : "linear" });
+	$("#masters-box").scrollTo("+=" + picWidth + "px", intervalLen, { axis: "x",  onAfter: showInfo, easing: "linear" });
 
+	if (whichMasters == 0) {
+		
+		/*
+		var width = $("#masters-row-0").width();
+		if ((count / numFac) % 2 == 1) {
+			var left = parseInt($("#masters-row-1").css("left"));
+			$("#masters-row-0").css("left", left + width);
+		} else {
+			var left = parseInt($("#masters-row-0").css("left"));
+			$("#masters-row-1").css("left", left + width);
+		}*/
+	}			
 
 };
 
@@ -177,16 +249,29 @@ var imageScroll = function() {
 </script>
 
 <div id="faculty-info" class="infobox"></div>
-<div id="faculty-box" class="row"><ul id="faculty-row" class="row-items"></ul></div>
-
 <div id="staff-info" class="infobox"></div>
-<div id="staff-box" class="row"><ul id="staff-row" class="row-items"></ul></div>
-
 <div id="phd-info" class="infobox"></div>
-<div id="phd-box" class="row"><ul id="phd-row" class="row-items"></ul></div>
-
 <div id="masters-info" class="infobox"></div>
-<div id="masters-box" class="row"><ul id="masters-row" class="row-items"></ul></div>
+
+<div id="faculty-box" class="row">
+<ul id="faculty-row-0" class="row-items"></ul>
+<ul id="faculty-row-1" class="row-items"></ul>
+</div>
+
+<div id="staff-box" class="row">
+<ul id="staff-row-0" class="row-items"></ul>
+<ul id="staff-row-1" class="row-items"></ul>
+</div>
+
+<div id="phd-box" class="row">
+<ul id="phd-row-0" class="row-items"></ul>
+<ul id="phd-row-1" class="row-items"></ul>
+</div>
+
+<div id="masters-box" class="row">
+<ul id="masters-row-0" class="row-items"></ul>
+<ul id="masters-row-1" class="row-items"></ul>
+</div>
 
 </body>
 </html>
