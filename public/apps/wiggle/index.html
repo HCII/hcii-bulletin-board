@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<!--
+	Wiggle Display for the HCII Bulletin Board
+	Copyright (c) 2011 Ian Li http://ianli.com/
+	Licensed under the MIT License (http://www.opensource.org/licenses/mit-license.php).
+-->
+<html>
+<head>
+	<title>Wiggle - HCII Bulletin Board</title>
+	
+	<style type="text/css">
+	html,body {
+		margin:0;
+		padding:0;
+		background-color:#999;
+	}
+	#display {
+		color:#000;
+	}
+		#display>.cell {
+			float:left;
+			margin:3px;
+			padding:5px;
+			background-color:#fff;
+			text-align:center;
+			-webkit-box-shadow:0 3px 5px rgba(0,0,0,0.5);
+			-moz-box-shadow:0 3px 5px rgba(0,0,0,0.5);
+			box-shadow:0 3px 5px rgba(0,0,0,0.5);
+			z-index:0;
+		}
+		#display>.cell>.img-box {
+			margin-bottom:3px;
+			width:120px;
+			height:120px;
+			overflow:hidden;
+		}
+		#display>.cell>.img-box>img {
+			width:120px;
+		}
+		#display>.cell>.name {
+			font-family:Helvetica,Arial,sans-serif;
+			font-size:11px;
+		}
+	</style>
+</head>
+<body>
+	
+<div id="display"></div>
+
+<!-- Javascripts -->
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script type="text/javascript" src="http://cdn.ianli.com/javascripts/underscore/1.1.6/underscore.min.js"></script>
+<script type="text/javascript" src="jquery.wiggle.js"></script>
+<script type="text/javascript">
+(function (window, $, undefined) {
+	// The template for the cells that appear in the display.
+	var template = _.template(
+		'<div class="cell">' +
+			'<div class="img-box">' +
+				'<img src="<%= image %>" />' +
+			'</div>' +
+			'<div class="name"><%= first_name %> <%= last_name %></div>' +
+		'</div>'
+	);
+	
+	// Fetch the JSON file of people.
+	$.getJSON('/people.json', function (data, textStatus, jqXHR) {
+		_.each(data, function (value, i) {
+			if (!value.person.image) {
+				// Set image to a default blank image.
+				value.person.image = 'blank.png';
+			}
+			
+			// Flag indicating the cell is wiggling.
+			var wiggling = false;
+			$(template(value.person))
+				.mouseover(function () {
+					// Check if it's already wiggling, 
+					// so we don't call wiggle too many times.
+					if (!wiggling) {
+						$(this).wiggle('start', {
+							wiggleDegrees: ['1','1.5','1','0','-1','-1.5','-1','0'],
+							limit: 10,
+							randomStart: true,
+							onWiggleStart: function (object) {
+								wiggling = true;
+							},
+							onWiggleStop: function (object) {
+								wiggling = false;
+							}
+						});
+					}
+				})
+				.appendTo('#display');
+		});
+	});
+})(window, jQuery);
+
+</script>
+</body>
+</html>
