@@ -44,9 +44,12 @@
 	.row { width: 800px; height: 130px; overflow-x: hidden; overflow-y: hidden; display: inline-block; }
 	.row-items { width: 10000px; height: 130px; }
 	.profile { display: inline; }
-	.profile-info { float: right; width: 130px;  }
-	#faculty-info { position: fixed; top: 20px; left: 200px; width: 260px; height: 130px; z-index: 99; background: #fff; border: 2px solid #00f; }
-	.info-pic { float: left; }
+	.infobox { position: fixed; width: 130px; height: 180px; z-index: 99; background: #ccc;  }
+	#faculty-info { top: 9px; left: 200px; }
+	#staff-info { top: 146px; left: 550px; }
+	#phd-info { top: 279px; left: 150px; }
+	#masters-info { top: 416px; left: 400px; }
+	.info-pic { width: 130px; height: 130px; }
 	</style>
 </head>
 <body>
@@ -58,69 +61,121 @@
 <script type="text/javascript" src="http://cdn.ianli.com/javascripts/underscore/1.1.6/underscore.min.js"></script>
 <script type="text/javascript" src="jquery.scrollTo.js"></script>
 <script type="text/javascript">
-(function (window, $, undefined) {
-	picWidth = 130;
-	numFac = faculty_images.length + 1;
-	whichFac = 0;
-	intervalLen = 1200;
-	count = 0;
+
+picWidth = 130;
+faculty = [];
+staff = [];
+masters = [];
+phd = [];
+whichFac = 0;
+whichStaff = 0;
+whichPhd = 0;
+whichMasters = 0;
+intervalLen = 1200;
+count = 0;
+
+// The template for the cells that appear in the display.
+var template = _.template(
+	'<div class="cell">' +
+		'<div class="img-box">' +
+			'<img src="<%= image %>" />' +
+		'</div>' +
+		'<div class="name"><%= first_name %> <%= last_name %></div>' +
+	'</div>'
+);
+
+// Fetch the JSON file of people.
+$.getJSON('/people.json', function (data, textStatus, jqXHR) {
+	_.each(data, function (value, i) {
+		if (!value.person.image) {
+			// Set image to a default blank image.
+			value.person.image = 'blank.png';
+		}
+	});
+
+	_.each(data, function (value, i) {
+		appendProfile(value.person, value.person.level);
+		
+		if (value.person.level == 'faculty') {
+			faculty.push(value.person);
+		} else if (value.person.level == 'staff') {
+			staff.push(value.person);
+		} else if (value.person.level == 'phd') {
+			phd.push(value.person);
+		} else if (value.person.level == 'masters') {
+			masters.push(value.person);
+		}
+	});
+
+	numFac = faculty.length;
+	numStaff = staff.length;
+	numPhd = phd.length;
+	numMasters = masters.length;
+
 	setInterval(imageScroll, intervalLen);
 
-	// The template for the cells that appear in the display.
-	var template = _.template(
-		'<div class="cell">' +
-			'<div class="img-box">' +
-				'<img src="<%= image %>" />' +
-			'</div>' +
-			'<div class="name"><%= first_name %> <%= last_name %></div>' +
-		'</div>'
-	);
-	
-	// Fetch the JSON file of people.
-	$.getJSON('/people.json', function (data, textStatus, jqXHR) {
-		_.each(data, function (value, i) {
-			if (!value.person.image) {
-				// Set image to a default blank image.
-				value.person.image = 'blank.png';
-			}
-		});
-	});
-})(window, jQuery);
+});
 
-var appendProfile = function(type, which) {
-	$("#" + type + "-row").css('width', $("#" + type + "-row").css('width')+picWidth);
+var appendProfile = function(person, level) {
+	//$("#" + level + "-row").css('width', $("#" + level + "-row").css('width')+picWidth);
 	var profile_tag = $("<li>").addClass("profile")
-	if (type == "faculty") {
-		var profile_img_tag = $("<img>").attr("src", "data/faculty/" + faculty_images[which])
-	}
+	var profile_img_tag = $("<img>").attr("src", person.image)
 	profile_img_tag.attr("height", 130)
 		       .attr("width", 130)
 		       .appendTo(profile_tag);
-	$("#" + type + "-row").append(profile_tag);
-
-	var info_tag = $("<div>").addClass("profile-info")
-				.html("mr. professor<br />nsh 1234")
-				.hide(); 
-	profile_tag.append(info_tag);
-	
+	$("#" + level + "-row").append(profile_tag);
 };
+
+var showInfo = function() {
+	var person = faculty[whichFac];
+	var featured_img_tag = $("<img>").addClass("info-pic").attr("src", person.image);
+	$("#faculty-info").html(person.first_name + " " + person.last_name + "<br />" + person.room)
+			  .prepend(featured_img_tag);
+
+	person = staff[whichStaff];
+	featured_img_tag = $("<img>").addClass("info-pic").attr("src", person.image);
+	$("#staff-info").html(person.first_name + " " + person.last_name + "<br />" + person.room)
+		        .prepend(featured_img_tag);
+
+	person = phd[whichPhd];
+	featured_img_tag = $("<img>").addClass("info-pic").attr("src", person.image);
+	$("#phd-info").html(person.first_name + " " + person.last_name + "<br />" + person.room)
+		        .prepend(featured_img_tag);
+
+	person = masters[whichMasters];
+	featured_img_tag = $("<img>").addClass("info-pic").attr("src", person.image);
+	$("#master-info").html(person.first_name + " " + person.last_name + "<br />" + person.room)
+		       	.prepend(featured_img_tag);
+
+
+
+}
 
 var imageScroll = function() { 
 	count = count + 1;
 	whichFac = (whichFac + 1) % numFac;
-	$("#faculty-box").scrollTo($("#faculty-row li:nth-child(" + whichFac + ")"), intervalLen, { "axis" : "x", easing : "linear" });
-	var facOffset = 3;
+	$("#faculty-box").scrollTo($("#faculty-row li:nth-child(" + whichFac + ")"), intervalLen, { axis : "x", onAfter: showInfo, easing : "linear" });
 
-	$("#faculty-info img.info-pic").attr("src", "data/faculty/" + faculty_images[(whichFac)%numFac]);
+	whichStaff = (whichStaff + 1) % numStaff;
+	$("#staff-box").scrollTo($("#staff-row li:nth-child(" + whichStaff + ")"), intervalLen, { axis : "x", onAfter: showInfo, easing : "linear" });
+
 };
+
 
 
 </script>
 
-<div id="faculty-info"><img class="info-pic" src="data/faculty/Mankoff_March09.jpg" /> Jen Mankoff<br />nsh 1234</div>
+<div id="faculty-info" class="infobox"></div>
 <div id="faculty-box" class="row"><ul id="faculty-row" class="row-items"></ul></div>
-<div class="row"><ul id="student-row" class="row-items"></ul></div>
-<div class="row"><ul id="staff-row" class="row-items"></ul></div>
+
+<div id="staff-info" class="infobox"></div>
+<div id="staff-box" class="row"><ul id="staff-row" class="row-items"></ul></div>
+
+<div id="phd-info" class="infobox"></div>
+<div id="phd-box" class="row"><ul id="phd-row" class="row-items"></ul></div>
+
+<div id="masters-info" class="infobox"></div>
+<div id="masters-box" class="row"><ul id="masters-row" class="row-items"></ul></div>
 
 </body>
 </html>
