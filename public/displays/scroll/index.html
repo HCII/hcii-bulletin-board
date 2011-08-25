@@ -90,6 +90,10 @@ $.getJSON('/people.json', function (data, textStatus, jqXHR) {
 		if (!value.person.image) {
 			// Set image to a default blank image.
 			value.person.image = 'blank.png';
+		} 
+
+		if (!value.person.room) { 
+			value.person.room = "";
 		}
 	});
 
@@ -158,6 +162,13 @@ var imageScroll = function() {
 
 	whichStaff = (whichStaff + 1) % numStaff;
 	$("#staff-box").scrollTo($("#staff-row li:nth-child(" + whichStaff + ")"), intervalLen, { axis : "x", onAfter: showInfo, easing : "linear" });
+
+	whichPhd = (whichPhd + 1) % numPhd;
+	$("#phd-box").scrollTo($("#phd-row li:nth-child(" + whichPhd + ")"), intervalLen, { axis : "x", onAfter: showInfo, easing : "linear" });
+
+	whichMasters = (whichMasters + 1) % numMasters;
+	$("#masters-box").scrollTo($("#masters-row li:nth-child(" + whichMasters + ")"), intervalLen, { axis : "x", onAfter: showInfo, easing : "linear" });
+
 
 };
 
