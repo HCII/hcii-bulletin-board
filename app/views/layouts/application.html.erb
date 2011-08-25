@@ -14,12 +14,28 @@
 	<%= csrf_meta_tag %>
 	
 	<style type="text/css">
+	html, body {
+		color:#fff;
+		background-color:#222;
+	}
 	a { color:#44a9eb; }
+	span.pipe {
+		margin:0 5px;
+		color:#666;
+	}
+	tbody tr:nth-child(even) td,
+	tbody tr.even td {
+		background-color:#444;
+	}
+	td {
+		vertical-align:top;
+	}
+	
+	/* Header */
 	#hd {
 		margin-bottom:20px;
 		padding-top:5px;
 		height:24px;
-		background-color:#333;
 		color:#fff;
 	}
 		#hd h1 {
@@ -27,15 +43,46 @@
 			font-weight:bold;
 			color:#fff;
 		}
+		#hd h1>a {
+			color:#fff;
+			text-decoration:none;
+		}
 	#account-nav {
 		text-align:right;
 	}
+	
+	/* Body */
+	#bd {
+		margin-bottom:20px;
+	}
+		#bd h1, #bd h2 {
+			color:#fff;
+		}
 	#bd-nav {
 		float:right;
 	}
-	span.pipe {
-		margin:0 5px;
-		color:#999;
+		#bd-nav>a {
+			display:block;
+			float:left;
+			margin:0 0 5px 5px;
+			padding:3px 5px;
+			background-color:#444;
+			-webkit-border-radius:3px;
+			-moz-border-radius:3px;
+			border-radius:3px;
+			text-decoration:none;
+		}
+		#bd-nav>a:hover {
+			color:#fff;
+			background-color:#44a9eb;
+		}
+	
+	/* Footer */
+	#ft {
+		margin-bottom:20px;
+		padding-top:5px;
+		border-top:1px solid #444;
+		color:#ccc;
 	}
 	</style>
 </head>
@@ -44,7 +91,7 @@
 <div id="hd">
 	<div class="container">
 		<div class="span-12">
-			<h1>HCII Bulletin Board</h1>
+			<h1><%= link_to "HCII Bulletin Board", root_path %></h1>
 		</div>
 		<div id="account-nav" class="span-12 last">
 			<% if authorized? %>
@@ -56,10 +103,16 @@
 		</div>
 	</div>
 </div>
-
+	
 <div class="container">
-	<div id="bd">
+	<div id="bd" class="span-24">
 		<%= yield %>
+	</div>
+	
+	<div id="ft" class="span-24">
+		Copyright &copy; 2011 
+		<%= link_to "HCII", "http://www.hcii.cmu.edu/" %>, 
+		<%= link_to "Carnegie Mellon University", "http://www.cmu.edu/" %>.
 	</div>
 </div>
 

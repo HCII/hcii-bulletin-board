@@ -8,6 +8,7 @@
   <tr>
     <th>First name</th>
     <th>Last name</th>
+	<th>Title</th>
 	<th>Room</th>
     <th></th>
     <th></th>
@@ -18,6 +19,7 @@
   <tr>
     <td><%= person.first_name %></td>
     <td><%= person.last_name %></td>
+	<td><%= person.title %></td>
 	<td><%= person.room %></td>
     <td><%= link_to 'Show', person %></td>
     <td><%= link_to 'Edit', edit_person_path(person) %></td>
