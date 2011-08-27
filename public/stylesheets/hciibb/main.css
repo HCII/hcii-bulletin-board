@@ -21,9 +21,8 @@ td {
 
 /* Header */
 #hd {
-	margin-top:10px;
-	margin-bottom:20px;
-	height:45px;
+	margin-top:20px;
+	margin-bottom:10px;
 	color:#fff;
 }
 	#hd h1 {
@@ -37,7 +36,6 @@ td {
 	}
 #account-nav {
 	text-align:right;
-	font-size:12px;
 }
 
 /* Body */

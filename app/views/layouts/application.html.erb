@@ -26,17 +26,19 @@
 <div class="container">
 	<!-- Header -->
 	<div id="hd" class="span-24">
+		<div class="span-6">
+			<a href="http://hciibb.ianli.com/">&laquo; Go to the displays</a>
+		</div>
 		<div class="span-12">
 			<h1><a href="/">
 				<%= image_tag "/images/hciibb/logo.png", 
-					:size => "231x45", 
+					:size => "400x82", 
+					:alt => "HCII Bulletin Board",
 					:title => "HCII Bulletin Board",
 					:style => "margin-left:-5px;" %></a>
 			</h1>
 		</div>
-		<div id="account-nav" class="span-12 last">
-			<a href="http://hciibb.ianli.com/">&laquo; Go to the displays</a> <span class="pipe">|</span>
-			
+		<div id="account-nav" class="span-6 last">
 			<% if authorized? %>
 				You're logged in <span class="pipe">|</span>
 				<%= link_to "Log out", logout_path %>
