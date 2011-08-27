@@ -13,9 +13,42 @@
 		<link rel="stylesheet" href="stylesheets/cw15gw20cc24/ie.css" type="text/css" media="screen, projection" />
 	<![endif]-->
 	
-	<!-- Application CSS -->
-	<link rel="stylesheet" href="stylesheets/hciibb/main.css" type="text/css" media="screen, projection" />
+	<style type="text/css">
+	html, body {
+		background-color:#eee;
+	}
+	h2 {
+		line-height:1em;
+	}
 	
+	/* Blueprint overrides */
+	.box {
+		padding:15px;
+		background-color:#fff;
+		box-shadow:0 3px 5px rgba(0,0,0,0.3);
+		-webkit-box-shadow:0 3px 5px rgba(0,0,0,0.3);
+		-moz-box-shadow:0 3px 5px rgba(0,0,0,0.3);
+		border-radius:3px;
+		-webkit-border-radius:3px;
+		-moz-border-radius:3px;
+	}
+		.box ul:last-child,
+		.box ol:last-child,
+		.box p:last-child {
+			margin-bottom:0;
+		}
+	#hd {
+		margin-top:20px;
+		margin-bottom:10px;
+		text-align:center;
+	}
+	#bd {
+		margin-bottom:20px;
+	}
+	#ft {
+		text-align:center;
+	}
+	</style>
 </head>
 <body>
 
@@ -24,40 +57,52 @@
 	
 <div class="container">
 	<!-- Header -->
-	<div id="hd" class="span-24">
-		<h1><a href="/">
-			<img alt="Logo" height="45" src="images/hciibb/logo.png" style="margin-left:-5px;" title="HCII Bulletin Board" width="231" /></a>
+	<div id="hd" class="prepend-6 span-12">
+		<h1>
+			<img src="images/hciibb/display-logo.png" alt="HCII Bulletin Board" title="HCII Bulletin Board" width="181" height="82" />
 		</h1>
 	</div>
 	
 	<!-- Body -->
-	<div id="bd" class="span-24">
+	<div id="bd" class="prepend-6 span-12">
+		<div class="box">
+			<h2>Displays</h2>
+
+			<ul>
+				<li><a href="displays/scroll/index.html">Scroll</a></li>
+				<li><a href="displays/wiggle/index.html">Wiggle</a></li>
+				<li><a href="displays/appear/index.html">Appear</a></li>
+			</ul>
+		</div>
 		
-<div class="span-12">
-	<h2>Displays</h2>
+		<div class="box">
+			<h2>Create</h2>
 
-	<ul>
-		<li><a href="/displays/scroll/">Scroll</a></li>
-		<li><a href="/displays/wiggle/">Wiggle</a></li>
-		<li><a href="/displays/appear/">Appear</a></li>
-	</ul>
-</div>
+			<ol>
+				<li>Fork this code on <a href="http://github.com/ianli/hcii-bulletin-board">Github</a>.</li>
+				<li>Checkout the <code>gh-pages</code> branch.</li>
+				<li>Create a directory under <code>displays/</code>.</li>
+				<li>Code your display the directory you created.</li>
+				<li>Commit your changes.</li>
+				<li>Add a link to your display on the list above.</li>
+			</ol>
+		</div>
+			
+		<div class="box">
+			<h2>Admin</h2>
 
-<div class="span-12 last">
-	<h2>Admin</h2>
-
-	<ul>
-		<li><a href="http://hciibb-admin.ianli.com/people">People List</a></li>
-		<li><a href="http://hciibb-admin.ianli.com/api">API Documentation</a></li>
-	</ul>
-</div>
+			<ul>
+				<li><a href="http://hciibb-admin.ianli.com/people">People List</a></li>
+				<li><a href="http://hciibb-admin.ianli.com/api">API Documentation</a></li>
+			</ul>
+		</div>
 	</div>
 	
 	<!-- Footer -->
-	<div id="ft" class="span-24">
+	<div id="ft" class="prepend-6 span-12">
 		Copyright &copy; 2011 
-		<a href="http://www.hcii.cmu.edu/">HCII</a>, 
-		<a href="http://www.cmu.edu/">Carnegie Mellon University</a>.
+		<a href="http://www.hcii.cmu.edu/">HCII</a> @
+		<a href="http://www.cmu.edu/">CMU</a>
 	</div>
 </div>
 

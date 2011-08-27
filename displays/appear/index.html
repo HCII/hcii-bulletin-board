@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<!--
+	Appear Display for the HCII Bulletin Board
+	Licensed under the MIT License (http://www.opensource.org/licenses/mit-license.php).
+-->
+<html>
+<head>
+	<title>Appear - HCII Bulletin Board</title>
+	
+	<style type="text/css">
+	html,body {
+		margin:0;
+		padding:0;
+		background-color:#999;
+	}
+	#display {
+		color:#000;
+	}
+	#display>.cell {
+		float:left;
+		margin:3px;
+		padding:5px;
+		background-color:#fff;
+		text-align:center;
+		-webkit-box-shadow:0 3px 5px rgba(0,0,0,0.5);
+		-moz-box-shadow:0 3px 5px rgba(0,0,0,0.5);
+		box-shadow:0 3px 5px rgba(0,0,0,0.5);
+		z-index:0;
+	}
+	#display>.cell .img-box {
+		margin-bottom:3px;
+		width:120px;
+		height:120px;
+		overflow:hidden;
+	}
+	#display>.cell .img-box>img {
+		width:120px;
+	}
+	#display>.cell .name {
+		font-family:Helvetica,Arial,sans-serif;
+		font-size:14px;
+		text-wrap: wrap;
+		width: 120px;
+		height: 30px;
+	}
+	</style>
+</head>
+<body>
+	
+<div id="display"></div>
+
+<!-- Javascripts -->
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script type="text/javascript" src="http://cdn.ianli.com/javascripts/underscore/1.1.6/underscore.min.js"></script>
+<script type="text/javascript">
+
+
+// The template for the cells that appear in the display.
+var template = _.template(
+	'<div class="cell">' +
+		'<div class="cell-inner">' +
+		'<div class="img-box">' +
+			'<img src="<%= image %>" />' +
+		'</div>' +
+		'<div class="name"><%= first_name %> <%= last_name %></div>' +
+	'</div></div>'
+);
+
+
+// Fetch the JSON file of people.
+$.getJSON('http://hciibb-admin.ianli.com/people.json?callback=?', function (data, textStatus, jqXHR) {
+	_.each(data, function (value, i) {
+		if (!value.person.image) {
+			// Set image to a default blank image.
+			value.person.image = 'blank.png';
+		}
+		
+		$(template(value.person))
+			.appendTo('#display');
+	});
+});
+
+var fade = function() {
+	var num = $(".cell").length;
+	var a = Math.floor(Math.random()*num);
+	var b = Math.floor(Math.random()*num);
+	$(".cell:eq("+a+")>.cell-inner").fadeOut(100, function() { 
+		$(".cell:eq("+b+")").append($(this));
+		$(this).fadeIn(100);
+	});
+	$(".cell:eq("+b+")>.cell-inner").fadeOut(100, function() {
+		$(".cell:eq("+a+")").append($(this));
+		$(this).fadeIn(100);
+	});
+}
+
+setInterval(fade, 240);
+	
+
+</script>
+</body>
+</html>
