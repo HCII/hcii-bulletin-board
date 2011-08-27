@@ -1,34 +1,21 @@
 <% content_for :head do %>
-	<style type="text/css">
-	.display-info {
-		display:block;
-		padding:5px;
-		background-color:#fff;
-		color:#000;
-		text-align:center;
-		text-decoration:none;
-	}
-		.display-info>._title {
-			font-size:16px;
-			font-weight:bold;
-		}
-	</style>
 <% end %>
 
-<h2>Displays</h2>
+<div class="span-12">
+	<h2>Displays</h2>
 
-<div class="span-8">
-	<a href="/displays/wiggle/" class="display-info">
-		<img src="/displays/wiggle/screenshot.jpg" width="250" height="188" title="Wiggle" /><br/>
-		<span class="_title">Wiggle</span>
-	</a>
+	<ul>
+		<li><%= link_to "Scroll", "/displays/scroll/" %></li>
+		<li><%= link_to "Wiggle", "/displays/wiggle/" %></li>
+		<li><%= link_to "Appear", "/displays/appear/" %></li>
+	</ul>
 </div>
 
-<hr class="space" />
+<div class="span-12 last">
+	<h2>Admin</h2>
 
-<h2>Admin</h2>
-
-<ul>
-	<li><%= link_to "People List", people_path %></li>
-	<li><%= link_to "API Documentation", api_path %></li>
-</ul>
+	<ul>
+		<li><%= link_to "People List", people_path %></li>
+		<li><%= link_to "API Documentation", api_path %></li>
+	</ul>
+</div>
