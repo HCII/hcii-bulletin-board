@@ -1,7 +1,18 @@
 <!DOCTYPE html>
 <!--
 	Scroll Display for the HCII Bulletin Board
+	
+	Copyright (c) 2011 Ian Li (http://ianli.com/) and Ryan Muller
 	Licensed under the MIT License (http://www.opensource.org/licenses/mit-license.php).
+	
+	Idea for the design:
+	* Rebecca Gulotta
+	* Peter Kinnaird
+	* Ian Li
+	* Derek Lomas
+	* Ryan Muller
+	* Sarah Reeder
+	* Kelly Rivers
 -->
 <html>
 <head>
@@ -13,270 +24,312 @@
 		padding:0;
 		background-color:#999;
 	}
-	#display {
-		color:#000;
+	
+	/* Header */
+	.header {
+		padding:5px 0 0 5px;
+		font-family:Helvetica,Arial,sans-serif;
+		font-weight:bold;
+		font-size:16px;
+		color:#fff;
+		text-shadow:0 -1px 0 #000;
 	}
-		#display>.cell {
-			float:left;
-			margin:3px;
-			padding:5px;
-			background-color:#fff;
-			text-align:center;
-			-webkit-box-shadow:0 3px 5px rgba(0,0,0,0.5);
-			-moz-box-shadow:0 3px 5px rgba(0,0,0,0.5);
-			box-shadow:0 3px 5px rgba(0,0,0,0.5);
-			z-index:0;
+	
+	/* The viewport in which ScrollingWall creates tiles. */
+	.viewport {
+		position:relative;
+		width:100%;
+		height:160px;
+		overflow:hidden;
+	}
+		.viewport ._strip {
+			position:absolute;
 		}
-		#display>.cell>.img-box {
-			margin-bottom:3px;
+		.viewport ._tile {
+			position:absolute;
+			width:140px;
+			height:198px;
+		}
+		
+	/* The tile for each person */
+	.person-tile {
+		margin:3px;
+		padding:5px;
+		width:120px;
+		background-color:#fff;
+		-webkit-box-shadow:0 3px 5px rgba(0,0,0,0.5);
+		-moz-box-shadow:0 3px 5px rgba(0,0,0,0.5);
+		box-shadow:0 3px 5px rgba(0,0,0,0.5);
+		text-align:center;
+		cursor:pointer;
+	}
+		.person-tile>._box {
+			margin-bottom:5px;
 			width:120px;
 			height:120px;
+			background-color:#333;
 			overflow:hidden;
 		}
-		#display>.cell>.img-box>img {
+		.person-tile>._box>img {
 			width:120px;
 		}
-		#display>.cell>.name {
+		.person-tile>._name {
 			font-family:Helvetica,Arial,sans-serif;
-			font-size:11px;
+			font-size:12px;
 		}
-
-	.row { 
-		width: 800px; 
-		height: 130px; 
-		overflow-x: hidden; 
-		overflow-y: hidden; 
-		display: inline-block; 
-		position: relative; }
-	.row-container {
-		position: relative;
+		
+	/* The TinyModal display */
+	#person-info-modal {
+		display:none;
+		width:200px;
+		background-color:#fff;
+		-webkit-box-shadow:0 3px 5px rgba(0,0,0,0.5);
+		-moz-box-shadow:0 3px 5px rgba(0,0,0,0.5);
+		box-shadow:0 3px 5px rgba(0,0,0,0.5);
+		text-align:center;
 	}
-	.row-items { 
-		height: 130px;
-		position: absolute;
-	 }
-	.profile { display: inline; }
-	.infobox { position: fixed; width: 130px; height: 180px; z-index: 99; background: #ccc;  }
-	#faculty-info { top: 9px; left: 200px; }
-	#staff-info { top: 146px; left: 550px; }
-	#phd-info { top: 279px; left: 150px; }
-	#masters-info { top: 416px; left: 400px; }
-	.info-pic { width: 130px; height: 130px; }
+		.person-info {
+			padding:10px;
+		}
+		.person-info>._box {
+			margin-bottom:10px;
+			width:180px;
+			height:180px;
+			background-color:#333;
+			overflow:hidden;
+		}
+		.person-info>._box>img {
+			width:180px;
+		}
+		.person-info>._name,
+		.person-info>._title,
+		.person-info>._room {
+			font-family:Helvetica,Arial,sans-serif;
+			font-size:15px;
+		}
+		.person-info>._name {
+			font-weight:bold;
+		}
 	</style>
 </head>
 <body>
-	
-<div id="display"></div>
+
+<div class="header">Faculty / Postdocs</div>
+<div id="faculty-viewport" class="viewport"></div>
+
+<div class="header">Staff</div>
+<div id="staff-viewport" class="viewport"></div>
+
+<div class="header">Ph.D. Students</div>
+<div id="phd-viewport" class="viewport"></div>
+
+<div class="header">Masters Students</div>
+<div id="masters-viewport" class="viewport"></div>
+
+<div id="person-info-modal"></div>
 
 <!-- Javascripts -->
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-<script type="text/javascript" src="http://cdn.ianli.com/javascripts/underscore/1.1.6/underscore.min.js"></script>
-<script type="text/javascript" src="jquery.scrollTo.js"></script>
+<script type="text/javascript" src="http://cdn.ianli.com/javascripts/underscore/1.1.7/underscore.min.js"></script>
+<script type="text/javascript" src="jquery.tinymodal.js"></script>
 <script type="text/javascript">
-
-picWidth = 130;
-faculty = [];
-staff = [];
-masters = [];
-phd = [];
-whichFac = 0;
-whichStaff = 0;
-whichPhd = 0;
-whichMasters = 0;
-intervalLen = 600;
-count = 0;
-
-// The template for the cells that appear in the display.
-var template = _.template(
-	'<div class="cell">' +
-		'<div class="img-box">' +
-			'<img src="<%= image %>" />' +
-		'</div>' +
-		'<div class="name"><%= first_name %> <%= last_name %></div>' +
-	'</div>'
-);
-
-// Fetch the JSON file of people.
-$.getJSON('/people.json', function (data, textStatus, jqXHR) {
-	_.each(data, function (value, i) {
-		if (!value.person.image) {
-			// Set image to a default blank image.
-			value.person.image = 'blank.png';
-		} 
-
-		if (!value.person.room) { 
-			value.person.room = "";
-		}
-	});
-
-	_.each(data, function (value, i) {
-		appendProfile(value.person, value.person.level);
+(function (window, $, undefined) {
+	// Animator is a singleton responsible for animating animations.
+	// An animation is any object that implements a tick function.
+	// Animator will call the tick() function 20 times per second.
+	// This object is an attempt to make the animation more efficient.
+	var Animator = new (function () {
+		var animations = [];
 		
-		if (value.person.level == 'faculty') {
-			faculty.push(value.person);
-		} else if (value.person.level == 'staff') {
-			staff.push(value.person);
-		} else if (value.person.level == 'phd') {
-			phd.push(value.person);
-		} else if (value.person.level == 'masters') {
-			masters.push(value.person);
+		this.addAnimation = function (animation) {
+			animations.push(animation);
 		}
-	});
+		
+		setInterval(function () {
+			for (var i = 0, n = animations.length; i < n; i++) {
+				var animation = animations[i];
+				animation.tick();
+			}
+		}, 50);
+	})();
+	
+	// The scrolling wall.
+	var ScrollingWall = function (viewport, options) {
+		if (typeof options === 'undefined') {
+			options = {};
+		}
+		
+		_.defaults(options, {
+			tileWidth: 100,
+			speed: 2,
+			onTileCreated: function () {},
+		});
+		
+		var $viewport = $(viewport),
+			$strip = $('<div></div>').addClass('_strip').appendTo($viewport),
+			$tiles = [];
 
-	numFac = faculty.length;
-	numStaff = staff.length;
-	numPhd = phd.length;
-	numMasters = masters.length;
+		var viewportWidth = $viewport.width(),
+			tileWidth = 140,
+			numTilesPerViewport = Math.floor(viewportWidth / tileWidth) + 1;
+		
+		// The number of tiles that have been created;
+		// this number will serve as ID for the newly created tiles.
+		var tileId = 0;
+		
+		var createTile = function () {
+			var $tile = $('<div></div>')
+				.addClass('_tile')
+				.css('left', tileId * tileWidth)
+				.appendTo($strip);
+				
+			options.onTileCreated.apply($tile, [tileId]);
 
-	$("#faculty-row-0").css("width", picWidth*numFac);
-	$("#faculty-row-1").css("width", picWidth*numFac);
-	$("#staff-row-0").css("width", picWidth*numStaff);
-	$("#staff-row-1").css("width", picWidth*numStaff);
-	$("#phd-row-0").css("width", picWidth*numPhd);
-	$("#phd-row-1").css("width", picWidth*numPhd);
-	$("#masters-row-0").css("width", picWidth*numMasters);
-	$("#masters-row-1").css("width", picWidth*numMasters);
-
-	setInterval(imageScroll, intervalLen);
-
-});
-
-var appendProfile = function(person, level) {
-	var profile_tag = $("<li>").addClass("profile")
-	var profile_img_tag = $("<img>").attr("src", person.image)
-	profile_img_tag.attr("height", 130)
-		       .attr("width", 130)
-		       .appendTo(profile_tag);
-	$("#" + level + "-row-0").append(profile_tag);
-	$("#" + level + "-row-1").append(profile_tag.clone());
-};
-
-var showInfo = function() {
-	var person = faculty[whichFac];
-	var featured_img_tag = $("<img>").addClass("info-pic").attr("src", person.image);
-	$("#faculty-info").html(person.first_name + " " + person.last_name + "<br />" + person.room)
-			  .prepend(featured_img_tag);
-
-	person = staff[whichStaff];
-	featured_img_tag = $("<img>").addClass("info-pic").attr("src", person.image);
-	$("#staff-info").html(person.first_name + " " + person.last_name + "<br />" + person.room)
-		        .prepend(featured_img_tag);
-
-	person = phd[whichPhd];
-	featured_img_tag = $("<img>").addClass("info-pic").attr("src", person.image);
-	$("#phd-info").html(person.first_name + " " + person.last_name + "<br />" + person.room)
-		        .prepend(featured_img_tag);
-
-	person = masters[whichMasters];
-	featured_img_tag = $("<img>").addClass("info-pic").attr("src", person.image);
-	$("#masters-info").html(person.first_name + " " + person.last_name + "<br />" + person.room)
-		       	.prepend(featured_img_tag);
-
-
-
-}
-
-var imageScroll = function() { 
-	count = count + 1;
-
-	whichFac = (whichFac + 1) % numFac;
-	$("#faculty-box").scrollTo("+=" + picWidth + "px", intervalLen, { axis: "x",  onAfter: showInfo, easing: "linear" });
-
-
-	// move strip of images to the right if it has reached the end
-	if (whichFac == 0) {
-		$("#faculty-box").scrollTo("0px", 0);
-		/*	
-		var width = $("#faculty-row-0").width();
-		if ((count / numFac) % 2 == 1) {
-			var left = parseInt($("#faculty-row-1").css("left"));
-			$("#faculty-row-0").css("left", left + width);
-		} else {
-			var left = parseInt($("#faculty-row-0").css("left"));
-			$("#faculty-row-1").css("left", left + width);
-		}*/
-	}			
+			$tiles.push($tile);
 			
-
-	whichStaff = (whichStaff + 1) % numStaff;
-	$("#staff-box").scrollTo("+=" + picWidth + "px", intervalLen, { axis: "x",  onAfter: showInfo, easing: "linear" });
-
-	if (whichStaff == 0) {
-		$("#staff-box").scrollTo("0px", 0);
-		/*
-		var width = $("#staff-row-0").width();
-		if ((count / numFac) % 2 == 1) {
-			var left = parseInt($("#staff-row-1").css("left"));
-			$("#staff-row-0").css("left", left + width);
-		} else {
-			var left = parseInt($("#staff-row-0").css("left"));
-			$("#staff-row-1").css("left", left + width);
-		}*/
-	}			
-
-	whichPhd = (whichPhd + 1) % numPhd;
-	$("#phd-box").scrollTo("+=" + picWidth + "px", intervalLen, { axis: "x",  onAfter: showInfo, easing: "linear" });
-
-	if (whichPhd == 0) {
-		$("#phd-box").scrollTo("0px", 0);
-		/*
-		var width = $("#phd-row-0").width();
-		if ((count / numFac) % 2 == 1) {
-			var left = parseInt($("#phd-row-1").css("left"));
-			$("#phd-row-0").css("left", left + width);
-		} else {
-			var left = parseInt($("#phd-row-0").css("left"));
-			$("#phd-row-1").css("left", left + width);
-		}*/
-	}			
-
-	whichMasters = (whichMasters + 1) % numMasters;
-	$("#masters-box").scrollTo("+=" + picWidth + "px", intervalLen, { axis: "x",  onAfter: showInfo, easing: "linear" });
-
-	if (whichMasters == 0) {
-		$("#masters-box").scrollTo("0px", 0);
+			tileId++;
+		}
 		
-		/*
-		var width = $("#masters-row-0").width();
-		if ((count / numFac) % 2 == 1) {
-			var left = parseInt($("#masters-row-1").css("left"));
-			$("#masters-row-0").css("left", left + width);
-		} else {
-			var left = parseInt($("#masters-row-0").css("left"));
-			$("#masters-row-1").css("left", left + width);
-		}*/
-	}			
+		for (var i = 0; i < numTilesPerViewport; i++) {
+			createTile();
+		}
+		
+		// Indicates whether the wall is scrolling.
+		var running = false;
+		
+		// Starts scrolling the wall.
+		this.run = function () {
+			running = true;
+		};
+		
+		// Stops scrolling the wall.
+		this.stop = function () {
+			running = false;
+		}
+		
+		// A tick is one movement of an animation.
+		// This method is called by Animator.
+		this.tick = function () {
+			// Return immediately if the wall is not scrolling.
+			if (!running)
+				return;
+				
+			var left = $strip.position().left;
+			$strip.css('left', left - options.speed);
 
-};
+			// If the tile is not visible anymore, remove it.
+			if (($tiles[0].position().left + tileWidth) < Math.abs(left)) {
+				var $tile = $tiles.shift();
+				$tile.remove();
+			}
 
-
-
+			// The tile is now visible, so create it.
+			if ((tileId * tileWidth) < (Math.abs(left) + viewportWidth)) {
+				createTile();
+			}
+		}
+		
+		// Add this 'animation' to Animator.
+		Animator.addAnimation(this);
+	};
+	
+	// The template for the tiles that appear in the display.
+	var personInfoTemplate = _.template(
+		'<div class="person-info">' +
+			'<div class="_box">' +
+				'<img src="<%= image %>" />' +
+			'</div>' +
+			'<div class="_name"><%= first_name %> <%= last_name %></div>' +
+			'<div class="_title"><%= title %></div>' +
+			'<div class="_room"><%= room %></div>' +
+		'</div>'
+	);
+	
+	// The template for the tiles that appear in the display.
+	var tileTemplate = _.template(
+		'<div class="person-tile">' +
+			'<div class="_box">' +
+				'<img src="<%= image %>" />' +
+			'</div>' +
+			'<div class="_name"><%= first_name %> <%= last_name %></div>' +
+		'</div>'
+	);
+	
+	// Fetch the JSON file of people.
+	$.getJSON('/people.json', function (data, textStatus, jqXHR) {
+		// Some people have missing images, so assign them with blank images.
+		_.each(data, function (value, i) {
+			if (!value.person.image) {
+				value.person.image = 'blank.png';
+			}
+		});
+		
+		// Group the data by level.
+		var dataByLevel = _.groupBy(data, function (value, i) {
+			return value.person.level;
+		});
+		
+		// Creates a tile inside `tileElement`.
+		// The `level` is either 'faculty', 'staff', 'phd', or 'masters'.
+		// `id` is the id of the newly created tile.
+		var createTile = function (tileElement, level, id) {
+			// Get the person whose tile to create.
+			var data = dataByLevel[level],
+				dataIndex = id % data.length,
+				person = data[dataIndex].person;
+		
+			// Create the display for the person.
+			var $el = $(tileTemplate(person))
+						.appendTo(tileElement)
+						.click(function () {
+							// When a tile is clicked, show more information about the person.
+							$('#person-info-modal')
+								.html(personInfoTemplate(person))
+								.tinymodal();
+						});
+		}
+		
+		new ScrollingWall(
+			'#faculty-viewport',
+			{
+				tileWidth: 136,
+				onTileCreated: function (i) {
+					createTile(this, 'faculty', i);
+				}
+			}
+		).run();
+		
+		new ScrollingWall(
+			'#staff-viewport',
+			{
+				tileWidth: 136,
+				onTileCreated: function (i) {
+					createTile(this, 'staff', i);
+				}
+			}
+		).run();
+		
+		new ScrollingWall(
+			'#phd-viewport',
+			{
+				tileWidth: 136,
+				onTileCreated: function (i) {
+					createTile(this, 'phd', i);
+				}
+			}
+		).run();
+		
+		new ScrollingWall(
+			'#masters-viewport',
+			{
+				tileWidth: 136,
+				onTileCreated: function (i) {
+					createTile(this, 'masters', i);
+				}
+			}
+		).run();
+	});
+})(window, jQuery);
 </script>
-
-<div id="faculty-info" class="infobox"></div>
-<div id="staff-info" class="infobox"></div>
-<div id="phd-info" class="infobox"></div>
-<div id="masters-info" class="infobox"></div>
-
-<div id="faculty-box" class="row">
-<ul id="faculty-row-0" class="row-items"></ul>
-<ul id="faculty-row-1" class="row-items"></ul>
-</div>
-
-<div id="staff-box" class="row">
-<ul id="staff-row-0" class="row-items"></ul>
-<ul id="staff-row-1" class="row-items"></ul>
-</div>
-
-<div id="phd-box" class="row">
-<ul id="phd-row-0" class="row-items"></ul>
-<ul id="phd-row-1" class="row-items"></ul>
-</div>
-
-<div id="masters-box" class="row">
-<ul id="masters-row-0" class="row-items"></ul>
-<ul id="masters-row-1" class="row-items"></ul>
-</div>
-
 </body>
 </html>
