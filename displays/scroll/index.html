@@ -123,8 +123,8 @@
 <div class="header">Ph.D. Students</div>
 <div id="phd-viewport" class="viewport"></div>
 
-<div class="header">Masters Students</div>
-<div id="masters-viewport" class="viewport"></div>
+<!-- <div class="header">Masters Students</div>
+<div id="masters-viewport" class="viewport"></div> -->
 
 <div id="person-info-modal"></div>
 
@@ -318,16 +318,17 @@
 				}
 			}
 		).run();
-		
-		new ScrollingWall(
-			'#masters-viewport',
-			{
-				tileWidth: 136,
-				onTileCreated: function (i) {
-					createTile(this, 'masters', i);
-				}
-			}
-		).run();
+
+		// NOTE: This is hidden while the list of Masters students hasn't been updated.
+		// new ScrollingWall(
+		// 	'#masters-viewport',
+		// 	{
+		// 		tileWidth: 136,
+		// 		onTileCreated: function (i) {
+		// 			createTile(this, 'masters', i);
+		// 		}
+		// 	}
+		// ).run();
 	});
 })(window, jQuery);
 </script>
