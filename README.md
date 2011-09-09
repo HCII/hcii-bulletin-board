@@ -1,7 +1,7 @@
 HCII Bulletin Board
 ===================
 
-This repository is part of the implementation of the bulletin board projected inside the HCII Lounge. It contains code for the displays/visualizations.
+This repository is part of the implementation of the bulletin board projected inside the HCII Lounge. It contains code for the visualizations. The visualizations are located at http://hciibb.ianli.com/.
 
 The data for the displays is hosted in a different location at http://hciibb-admin.ianli.com/.
 
