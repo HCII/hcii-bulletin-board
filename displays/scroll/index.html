@@ -327,24 +327,21 @@
 
     $('#faculty-viewport').mousemove(function(event) {
       var maxspeed = 25;
-      var speed = maxspeed*(event.pageX/$('.viewport').width());
-      if (speed < 0) speed = 0;
+      var speed = Math.max(0,2*maxspeed*(event.pageX/$('.viewport').width()-1/2));
 
       facultyWall.speed = speed;
     });
 
     $('#staff-viewport').mousemove(function(event) {
       var maxspeed = 25;
-      var speed = maxspeed*(event.pageX/$('.viewport').width());
-      if (speed < 0) speed = 0;
+      var speed = Math.max(0,2*maxspeed*(event.pageX/$('.viewport').width()-1/2));
 
       staffWall.speed = speed;
     });
 
     $('#phd-viewport').mousemove(function(event) {
       var maxspeed = 25;
-      var speed = maxspeed*(event.pageX/$('.viewport').width());
-      if (speed < 0) speed = 0;
+      var speed = Math.max(0,2*maxspeed*(event.pageX/$('.viewport').width()-1/2));
 
       phdWall.speed = speed;
     });
