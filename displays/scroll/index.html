@@ -193,6 +193,8 @@
 		for (var i = 0; i < numTilesPerViewport; i++) {
 			createTile();
 		}
+
+    this.speed = options['speed'];
 		
 		// Indicates whether the wall is scrolling.
 		var running = false;
@@ -215,7 +217,7 @@
 				return;
 				
 			var left = $strip.position().left;
-			$strip.css('left', left - options.speed);
+			$strip.css('left', left - this.speed);
 
 			// If the tile is not visible anymore, remove it.
 			if (($tiles[0].position().left + tileWidth) < Math.abs(left)) {
@@ -290,17 +292,18 @@
 						});
 		}
 		
-		new ScrollingWall(
+		facultyWall = new ScrollingWall(
 			'#faculty-viewport',
-			{
+      {	
 				tileWidth: 136,
 				onTileCreated: function (i) {
 					createTile(this, 'faculty', i);
 				}
 			}
-		).run();
+      );
+    facultyWall.run();
 		
-		new ScrollingWall(
+		staffWall = new ScrollingWall(
 			'#staff-viewport',
 			{
 				tileWidth: 136,
@@ -308,9 +311,10 @@
 					createTile(this, 'staff', i);
 				}
 			}
-		).run();
+      );
+    staffWall.run();
 		
-		new ScrollingWall(
+		phdWall = new ScrollingWall(
 			'#phd-viewport',
 			{
 				tileWidth: 136,
@@ -318,9 +322,41 @@
 					createTile(this, 'phd', i);
 				}
 			}
-		).run();
+      );
+    phdWall.run();
 
-		// NOTE: This is hidden while the list of Masters students hasn't been updated.
+    $('#faculty-viewport').mousemove(function(event) {
+      var maxspeed = 25;
+      var speed = maxspeed*(event.pageX/$('.viewport').width());
+      if (speed < 0) speed = 0;
+
+      facultyWall.speed = speed;
+    });
+
+    $('#staff-viewport').mousemove(function(event) {
+      var maxspeed = 25;
+      var speed = maxspeed*(event.pageX/$('.viewport').width());
+      if (speed < 0) speed = 0;
+
+      staffWall.speed = speed;
+    });
+
+    $('#phd-viewport').mousemove(function(event) {
+      var maxspeed = 25;
+      var speed = maxspeed*(event.pageX/$('.viewport').width());
+      if (speed < 0) speed = 0;
+
+      phdWall.speed = speed;
+    });
+
+    $('.viewport').mouseout(function(event) {
+      facultyWall.speed = 2;
+      staffWall.speed = 2;
+      phdWall.speed = 2;
+    });
+
+
+		// NOTE: This is hidden while the list of Masters students hasnt been updated.
 		// new ScrollingWall(
 		// 	'#masters-viewport',
 		// 	{
